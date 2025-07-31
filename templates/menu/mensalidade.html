@@ -1,0 +1,211 @@
+{% extends 'base.html'%}
+{% block body %}
+
+<style>
+    /* Estilos CSS básicos para centralizar e melhorar a aparência */
+    body {
+        font-family: 'Inter', sans-serif; /* Mantendo Inter, mas pode ser Arial se preferir */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: #f0f2f5; /* Cor de fundo do seu exemplo */
+        margin: 0;
+        padding: 20px; /* Espaçamento para garantir que a tabela não cole nas bordas em telas pequenas */
+        overflow-x: auto; /* Permite rolagem horizontal se o conteúdo for muito largo */
+    }
+
+    /* Contêiner principal da tabela */
+    .table-container {
+        background-color: #fff; /* Fundo branco como no seu exemplo */
+        padding: 30px; /* Padding interno */
+        border-radius: 8px; /* Cantos arredondados */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        width: 100%;
+        max-width: 1200px; /* Adicionei um max-width para a tabela não ficar gigantesca em telas grandes */
+        text-align: center;
+    }
+
+    .table-container h1 {
+        margin-bottom: 25px;
+        color: #333; /* Cor do título */
+        font-size: 2rem; /* Tamanho do título padrão, será sobrescrito pelo .titulo */
+        font-weight: bold;
+    }
+
+    /* Estilo para o título gigante */
+    .titulo {
+        font-size: 50px; /* Ajustei para um tamanho mais razoável e visível */
+        display: block; /* Garante que o overflow e text-overflow funcionem */
+        margin-bottom: 10px; /* Espaçamento abaixo do título */
+    }
+
+    /* Estilos para a tabela */
+    table {
+        border-collapse: collapse; /* Colapsa as bordas das células */
+        width: 100%; /* Ocupa 100% da largura do contêiner */
+        border-radius: 8px; /* Cantos arredondados para a tabela */
+        overflow: hidden; /* Garante que as bordas arredondadas funcionem com overflow */
+        margin-top: 20px; /* Espaçamento superior */
+    }
+
+    th, td {
+        padding: 12px 15px; /* Espaçamento interno para células */
+        text-align: left; /* Alinhamento do texto à esquerda */
+        border-bottom: 1px solid #e5e7eb; /* Linha inferior para separar as linhas */
+    }
+
+    th {
+        background-color: #8a7284; /* Cor de fundo do cabeçalho, do seu botão de login */
+        color: white; /* Cor do texto do cabeçalho */
+        font-weight: bold; /* Texto do cabeçalho em negrito */
+        text-transform: uppercase; /* Texto do cabeçalho em maiúsculas */
+        letter-spacing: 0.05em; /* Espaçamento entre letras */
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9fafb; /* Cor de fundo para linhas pares (zebra striping) */
+    }
+
+    tr:hover {
+        background-color: #eef2ff; /* Cor de fundo ao passar o mouse sobre a linha */
+        transition: background-color 0.3s ease; /* Transição suave */
+    }
+
+    /* Estilos para a célula de ação */
+    .action-cell {
+        text-align: center; /* Centraliza o conteúdo da célula de ação */
+    }
+
+    /* Botão de ação, adaptado do .login-button */
+    .action-button {
+        background-color: #8a7284; /* Cor de fundo do seu botão de login */
+        color: white; /* Cor do texto do botão */
+        padding: 8px 12px; /* Espaçamento interno do botão */
+        border: none; /* Remove borda */
+        border-radius: 4px; /* Cantos arredondados do botão */
+        text-decoration: none; /* Remove sublinhado do link */
+        font-size: 0.875rem; /* Tamanho da fonte do botão */
+        font-weight: 600; /* Peso da fonte do botão */
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Transição suave */
+    }
+
+    .action-button:hover {
+        background-color: #694e62; /* Cor de fundo do botão ao passar o mouse, do seu botão de login */
+    }
+
+    /* Estilos para o botão circular */
+    .circulo_botao {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        font-size: 20px; /* Aumentei o tamanho da fonte para o símbolo */
+        cursor: pointer;
+        transition: background-color 0.3s;
+        color: white;
+        display: flex; /* Para centralizar o símbolo */
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto; /* Centraliza o botão na célula */
+    }
+
+    .circulo_botao.checked {
+        background-color: #4CAF50; /* Verde para "correto" */
+    }
+
+    .circulo_botao.unchecked {
+        background-color: #F44336; /* Vermelho para "incorreto" */
+    }
+
+    /* Estilo para mensagem de erro/informação */
+    .message {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .message.error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .message.info {
+        background-color: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+
+    /* Estilos para mensagens flash do Flask */
+    .message.success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .message.danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+
+<div class="table-container">
+    <h1 class="titulo">2025</h1>
+
+    
+    {% if dados_mensalidades %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>CPF</th> {# Adicionado cabeçalho para CPF #}
+                <th>Jan</th>
+                <th>Fev</th>
+                <th>Mar</th>
+                <th>Abr</th>
+                <th>Mai</th>
+                <th>Jun</th>
+                <th>Jul</th>
+                <th>Ago</th>
+                <th>Set</th>
+                <th>Out</th>
+                <th>Nov</th>
+                <th>Dez</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for linha in dados_mensalidades %}
+            <tr>
+                <td>{{ linha.nome }}</td> {# Acessa pelo nome da chave 'nome' #}
+                <td>{{ linha.cpf }}</td> {# Acessa o CPF pela chave 'cpf' #}
+                {# Itera sobre os meses. Note que 'set' aqui corresponde à chave 'set' no dicionário #}
+                {% for mes_key in ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'] %}
+                <td class="action-cell">
+                    {% set status = linha[mes_key] %} {# Pega o status do mês atual usando a chave do dicionário #}
+                    <button type="button"
+                            class="circulo_botao {% if status == 'TRUE' %}checked{% else %}unchecked{% endif %}"
+                            onclick="window.location.href='/atualizar_mensalidade/{{ linha.cpf }}/{{ loop.index0 }}'">
+                            {# Passa o CPF da linha atual (linha.cpf) e o índice do mês (0-11) #}
+                            {% if status == 'TRUE' %} &#10003; {# Checkmark #}
+                            {% else %} &#10007; {# Cross mark (or leave empty if you prefer) #}
+                            {% endif %}
+
+                    </button>
+                </td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        {# Esta mensagem será exibida se dados_mensalidades estiver vazia, e nenhuma mensagem específica foi definida acima #}
+        {% if not mensagem and not erro_bd and not erro_geral %}
+            <p class="message info">Nenhum dado de mensalidade disponível. Por favor, verifique o CPF ou cadastre um novo registro.</p>
+        {% endif %}
+    {% endif %}
+</div>
+
+{% endblock %}

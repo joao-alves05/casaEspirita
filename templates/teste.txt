@@ -1,0 +1,8 @@
+	 | Jan | Fev | Mar | Abr | Mai | Jun | Jul | Ago | Set | Out | Nov | Dec |
+Usuario1 | Pag | Pag |     |     |     |     |     |     |     |     |     |     |
+Usuario2 |     |     |     |     |     |     |     |     |     |     |     |     |
+Usuario3 | Pag | Pag |     |     |     |     |     |     |     |     |     |     |
+Usuario4 |     |     |     |     |     |     |     |     |     |     |     |     |
+Usuario5 | Pag |     |     |     |     |     |     |     |     |     |     |     |
+Usuario6 | Pag | Pag | Pag |     |     |     |     |     |     |     |     |     |
+Usuario7 | Pag | Pag |     |     |     |     |     |     |     |     |     |     |

@@ -1,0 +1,218 @@
+# app.py
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+import pyodbc
+import funcoes as fun # Assumindo que 'funcoes.py' existe e contém as funções referenciadas
+from twilio.rest import Client # Assumindo que Twilio é usado em outras partes do app
+from dotenv import load_dotenv # Assumindo que dotenv é usado em outras partes do app
+import os
+
+# Carrega variáveis de ambiente (se você tiver um arquivo .env)
+load_dotenv()
+
+# Configuração da conexão com o banco de dados
+dados_conexao = ("Driver={SQLite3 ODBC Driver};"
+                 "Server=localhost;"
+                 "Database=usuarios.db") # Usando o banco de dados 'usuarios.db' fornecido
+
+# Crie a instância do Flask e diga a ele onde estão os arquivos estáticos
+app = Flask(__name__, static_folder='static')
+
+app.config['SECRET_KEY'] = os.urandom(24)
+
+
+
+# def init_mensalidades_db():
+
+#     try:
+#         # A conexão para 'usuarios.db' é usada aqui.
+#         # Se 'mensalidades' estiver em um DB diferente, 'dados_conexao' precisaria ser ajustado ou uma nova conexão criada.
+#         with pyodbc.connect(dados_conexao) as conexao:
+#             with conexao.cursor() as cursor:
+
+#                 # Verifica se a tabela está vazia e insere dados de exemplo
+#                 cursor.execute("SELECT COUNT(*) FROM mensalidades")
+
+#     except pyodbc.Error as ex:
+#         print(f"Erro ao inicializar o banco de dados de mensalidades: {ex}")
+#     except Exception as e:
+#         print(f"Erro inesperado na inicialização do DB de mensalidades: {e}")
+
+# --- Rotas Existentes ---
+@app.route("/")
+def paginaInicial():
+    return render_template("paginaInicial.html")
+
+@app.route("/entrar")
+def entrar():
+    return render_template("conta/entrar.html")
+
+
+cpfGlobal_mensalidade = []
+@app.route("/entrar", methods=["POST"])
+def handle_login():
+    cpf = request.form["cpf"]
+    password = request.form["password"]
+    cpfGlobal_mensalidade.append(cpf)
+    print("---Tentativa de login---")
+    print(f"CPF: {cpf}")
+
+    conexao = None
+    try:
+        conexao = pyodbc.connect(dados_conexao)
+        cursor = conexao.cursor()
+
+        cursor.execute("SELECT senha FROM usuarios WHERE cpf = ?", (cpf,))
+        resultado = cursor.fetchone()
+
+        aprovado = False
+        if resultado:
+            senha_usuario = resultado[0]
+            if password == senha_usuario:
+                aprovado = True
+            else:
+                aprovado = False
+
+        if aprovado:
+            flash("Login bem-sucedido!", "success")
+            return redirect(url_for('menu'))
+        else:
+            flash("CPF ou senha inválidos. Tente novamente.", "danger")
+            return redirect(url_for('entrar'))
+
+    except pyodbc.Error as ex:
+        sqlstate = ex.args[0]
+        print(f"Erro de Banco de Dados: {ex}")
+        flash("Ocorreu um erro ao tentar entrar. Tente novamente mais tarde.", "danger")
+        return redirect(url_for('entrar'))
+    finally:
+        if conexao:
+            conexao.close()
+            print("Conexão com o banco de dados fechada.")
+
+@app.route("/recuperacao_senha")
+def esqueciSenha():
+    return render_template("conta/esqueciSenha.html")
+
+@app.route("/recuperacao_senha", methods=['POST'])
+def handle_esqueciSenha():
+    if request.method == "POST":
+        cpf = request.form["cpf"]
+        print("---Tentativa de Trocar Senha---")
+        print(f"CPF: {cpf}")
+        # O código Twilio e de geração de token está comentado aqui,
+        # mas seria o local para integrá-lo se necessário.
+        return render_template("conta/entrar.html")
+
+@app.route("/token")
+def esqueciSenha_token():
+    return render_template("conta/token.html")
+
+@app.route("/cadastrarSe")
+def cadastrarSe():
+    return render_template("conta/cadastrar.html")
+
+@app.route("/cadastrarSe", methods=["POST"])
+def handle_cadastrarSe():
+    if request.method == "POST":
+        full_name = request.form["full_name"]
+        telefone_bruto = request.form["telefone"]
+        telefone_formatado = fun.formatar_telefone(telefone_bruto)
+        cpf = request.form["cpf"]
+        new_password = request.form["new_password"]
+        confirm_password = request.form["confirm_password"]
+        data_criacao = fun.dataAtual()
+        ano = fun.ano_atual()
+
+        print("---Tentativa de Cadastro---")
+        print(f"Nome Completo: {full_name}")
+        print(f"Telefone: {telefone_formatado}")
+        print(f"CPF: {cpf}")
+        print(f"Senha: {new_password}")
+        print(f"Confirmar Senha: {confirm_password}")
+        print(f"Data Criação: {data_criacao}")
+        # print(f"Ano: {}")
+
+        if new_password != confirm_password:
+            flash("As senhas não coincidem. Tente novamente.", "danger")
+            return redirect(url_for('cadastrarSe'))
+
+        try:
+            conexao = pyodbc.connect(dados_conexao)
+            cursor = conexao.cursor()
+
+            # comando1 = 'INSERT INTO usuarios (nome, cpf, senha, telefone, data_criacao) VALUES (?, ?, ?, ?, ?)'
+            # cursor.execute(comando1, (full_name, cpf, new_password, telefone_formatado, data_criacao))
+
+            
+
+            comando2 = 'INSERT INTO mensalidade (nome, cpf, ano) VALUES (?, ?, ?)'
+            cursor.execute(comando2, (full_name, cpf, ano))
+            conexao.commit()
+            print("comando funcionou! _____________________________________________________________________")
+
+
+            flash("Cadastro realizado com sucesso! Agora você pode fazer login.", "success")
+            return redirect(url_for('entrar'))
+
+        except pyodbc.Error as ex:
+            sqlstate = ex.args[0]
+            print(f"Erro de Banco de Dados: {ex}")
+            flash("Ocorreu um erro ao tentar cadastrar. Tente novamente mais tarde.", "danger")
+            return redirect(url_for('cadastrarSe'))
+        finally:
+            if 'conexao' in locals() and conexao:
+                conexao.close()
+                print("Conexão com o banco de dados fechada.")
+
+@app.route("/menu")
+def menu():
+    return render_template("menu/menu.html")
+
+print(cpfGlobal_mensalidade)
+# --- Rota da Tabela de Mensalidades (ATUALIZADA) ---
+@app.route("/mensalidade") # Esta rota agora buscará e exibirá os dados da tabela
+def mensalidade():
+    dados_mensalidades = []
+    print(cpfGlobal_mensalidade[0])
+
+    try:
+        with pyodbc.connect(dados_conexao) as conexao:
+            with conexao.cursor() as cursor:
+                # Seleciona o nome e a string de status dos meses
+                #"SELECT senha FROM usuarios WHERE cpf = ?", (cpf,))
+                comando = """SELECT nome, jan, fev, mar, abr, mai, jun, jul, ago, set_, out, nov, dec 
+                               FROM mensalidade
+                               WHERE cpf = ?"""
+               
+                cursor.execute(comando, cpfGlobal_mensalidade[0])
+                resultados = cursor.fetchall()
+        resultados = cursor.fetchall()
+        print(f"Resultados brutos do banco de dados: {resultados}") # Para ver como vem antes de decodificar
+
+    
+        return render_template('menu/mensalidade.html', dados_mensalidades=dados_mensalidades)
+
+    except pyodbc.Error as ex:
+        print(f"Erro no banco de dados: {ex}")
+        flash("Ocorreu um erro ao buscar as mensalidades.", "danger")
+        return render_template('index.html', dados_mensalidades=[]) # Retorna template vazio em caso de erro
+    except Exception as e:
+        print(f"Erro inesperado: {e}")
+        flash("Ocorreu um erro inesperado ao carregar as mensalidades.", "danger")
+        return render_template('entrar.html', dados_mensalidades=[]) # Retorna template vazio em caso de erro
+
+# --- Outras Rotas ---
+@app.route("/despesas")
+def despesas():
+    return render_template("menu/despesas.html")
+
+@app.route("/devedores")
+def devedores():
+    return render_template("menu/devedores.html")
+
+@app.route("/biblioteca")
+def biblioteca():
+    return render_template("menu/biblioteca.html")
+
+if __name__ == '__main__':
+    app.run(debug=True)

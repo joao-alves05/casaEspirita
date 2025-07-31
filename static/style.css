@@ -1,0 +1,69 @@
+/* paginaIncial ----------------------------------------------------------------------- */
+.temConta_ {
+    font-weight: normal;
+    text-align: center;
+    position: relative;
+    top: 160px;
+    font-size: 60px;
+}
+
+.botoesInicial {
+    text-align: center;
+    margin-top: 210px;
+
+}
+
+/* Menu ----------------------------------------------------------------------- */
+h1 {
+    font-family: Helvetica;
+    font-weight: bolder;
+    margin-bottom: 70px;
+}
+
+.saldo-valor {
+    font-size: 60px;
+    font-family: Helvetica;
+    color: rgb(14, 14, 14);
+    font-weight: bolder;
+    margin-bottom: 70px;
+    line-height: 0.5; /* Aproxima a linha de cima (do h4) */
+
+    position: relative;
+    top: 155px;
+    left: 235px;
+    
+}
+
+.saldo-titulo {
+    position: relative;
+    top: 145px;
+    left: 238px;
+    font-size: 25px;
+    color: rgb(14, 14, 14);
+    font-weight: normal;
+}
+
+.botoesMenu {
+    text-align: center;
+    margin-top: 240px;
+}
+
+.btn { 
+    margin: 25px; 
+}
+
+
+.btn-rosaCinza {
+    background-color: #8a7284; 
+    color: white;
+    width: 185px;   
+    height: 44.4px;
+    font-size: 16.5px;
+    
+}
+
+.btn-rosaCinza:hover {
+    background-color: #694e62;
+    color: white;
+}
+

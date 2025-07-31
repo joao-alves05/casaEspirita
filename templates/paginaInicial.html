@@ -1,0 +1,13 @@
+{% extends 'base.html'%}
+
+
+
+{% block body %} 
+    <h1 class="temConta_">Selecione uma das opções para entrar</h1>
+
+    <main class="botoesInicial">
+        <a href="{{ url_for('entrar') }}" class="btn btn-rosaCinza">Entrar</a>
+        <a href="{{ url_for('cadastrarSe') }}" class="btn btn-rosaCinza">Cadastrar-se</a>
+    </main>
+
+{% endblock %}

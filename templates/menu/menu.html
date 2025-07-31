@@ -1,0 +1,15 @@
+{% extends 'base.html'%}
+
+{% block body %} 
+    <h4 class="saldo-titulo">Saldo</h4>
+    <h1 class="saldo-valor">R$ 10.854,07</h1>
+
+    <main class="botoesMenu">
+        <a href="{{ url_for('mensalidade') }}" class="btn btn-rosaCinza">Mensalidade</a>
+        <a href="{{ url_for('despesas') }}" class="btn btn-rosaCinza">Despesas</a>
+        <a href="{{ url_for('devedores') }}" class="btn btn-rosaCinza">Devedores</a>
+        <a href="{{ url_for('biblioteca') }}" class="btn btn-rosaCinza">Biblioteca</a>
+    </main>
+
+
+{% endblock %}

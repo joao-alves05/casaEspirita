@@ -1,0 +1,111 @@
+{% extends 'base.html'%}
+
+{% block body %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .token-input-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .token-input-container h2 {
+            margin-bottom: 25px;
+            color: #333333;
+        }
+
+        .token-input-container p {
+            margin-bottom: 20px;
+            color: #666666;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555555;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+            text-align: center; /* Centraliza o texto do token */
+            letter-spacing: 2px; /* Espaçamento entre os caracteres para melhor leitura */
+        }
+
+        .form-group input[type="text"]:focus {
+            border-color: #a55892;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem #642755(0, 123, 255, 0.25);
+        }
+
+        .btn-submit {
+            background-color: #8a7284;
+            color: #ffffff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-submit:hover {
+            background-color: #694e62;
+        }
+
+        .resend-token {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .resend-token a {
+            color: #af5197ec;
+            text-decoration: none;
+        }
+
+        .resend-token a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <div class="token-input-container">
+        <h2>Verifique seu SMS</h2>
+        <p>Um código de 6 dígitos foi enviado para o seu SMS. Por favor, insira-o abaixo para continuar com a redefinição da sua senha.</p>
+        <form action="#" method="POST"> <div class="form-group">
+                <label for="token">Código de Verificação:</label>
+                <input type="text" id="token" name="token" placeholder="######" maxlength="6" pattern="[0-9]{6}" required>
+            </div>
+            <button type="submit" class="btn-submit">Verificar Código</button>
+        </form>
+        <div class="resend-token">
+            <a href="#">Não recebeu o código? Reenviar</a> </div>
+    </div>
+
+{% endblock %}

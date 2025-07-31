@@ -1,0 +1,105 @@
+{% extends 'base.html'%} 
+
+{% block body %}  
+
+    <style> 
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; 
+            padding: 0;
+            background-color: #f0f2f5; 
+            position: relative; 
+        }
+
+        /* Barra pesquisa -------------------------------------------------------- */ 
+        .custom-search-bar { 
+            background-color: #e0e0e0; 
+            border-radius: 25px; 
+            padding: 8px 20px; 
+            display: flex; 
+            align-items: center; 
+            width: 100%; 
+            max-width: 300px; /* Reduzi um pouco a largura para caber melhor no canto */
+            box-sizing: border-box; 
+            
+            /* >>>>>>> ESTILOS DE POSICIONAMENTO PARA O CANTO SUPERIOR DIREITO <<<<<<< */
+            position: fixed; /* Ou 'absolute' se você quiser que ela role com a página */
+            top: 20px;       /* Distância do topo */
+            right: 20px;     /* Distância da direita */
+            z-index: 1000;   /* Garante que a barra fique acima de outros elementos */
+        } 
+
+        .custom-search-bar .search-icon { 
+            margin-right: 10px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        } 
+
+        .custom-search-bar .search-icon svg { 
+            width: 20px; 
+            height: 20px; 
+            fill: #666666; 
+        } 
+
+        .custom-search-bar input[type="search"] { 
+            flex-grow: 1; 
+            border: none; 
+            outline: none; 
+            background: transparent; 
+            font-size: 1em; 
+            color: #333333; 
+            padding: 0; 
+        } 
+
+        .custom-search-bar input[type="search"]::placeholder { 
+            color: #666666; 
+            font-weight: 400; 
+        } 
+
+        .custom-search-bar button { 
+            display: none; 
+        } 
+
+        /* Estilos para outros elementos para evitar sobreposição */
+        .biblioteca-container { 
+            background-color: #fff; 
+            padding: 30px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+            width: 100%; 
+            max-width: 400px; 
+            text-align: center; 
+            margin-top: 100px; /* Adicionado margem para empurrar o conteúdo para baixo da barra fixa */
+            /* Se o body tiver flexbox para centralizar outros elementos, talvez precise de 'margin: 0 auto;' aqui */
+            margin: 100px auto 0 auto; /* Exemplo para centralizar o container da biblioteca e dar margem do topo */
+        } 
+
+        .biblioteca-container h2 { 
+            margin-bottom: 25px; 
+            color: #333; 
+        } 
+        
+        /* Se você tiver um elemento main no base.html que contém o block body,
+           pode ser mais robusto aplicar margem a esse main. */
+    </style> 
+
+
+    <div class="custom-search-bar"> 
+        <form action="/search" method="get" style="display: flex; align-items: center; width: 100%;"> 
+            <span class="search-icon"> 
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
+                    <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill=""/> 
+                </svg> 
+            </span> 
+            <input type="search" id="simple-search" name="q" placeholder="Pesquisar"> 
+            <button type="submit">Buscar</button> 
+        </form> 
+    </div> 
+
+    <div class="biblioteca-container"> 
+        <h2>Biblioteca</h2> 
+        </div> 
+    
+    {% endblock %}

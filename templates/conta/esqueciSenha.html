@@ -1,0 +1,117 @@
+{% extends 'base.html'%}
+
+{% block body %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .password-reset-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .password-reset-container h2 {
+            margin-bottom: 25px;
+            color: #333333;
+        }
+
+        .password-reset-container p {
+            margin-bottom: 20px;
+            color: #666666;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555555;
+            font-weight: bold;
+        }
+
+        .form-group input[type="email"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box; /* Garante que padding e border sejam incluídos na largura total */
+        }
+
+        .form-group input[type="email"]:focus {
+            border-color: #a55892;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem #642755(0, 123, 255, 0.25);
+        }
+
+        .btn-submit {
+            background-color: #8a7284;
+            color: #ffffff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-submit:hover {
+            background-color: #694e62;
+        }
+
+        .back-to-login {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        .back-to-login a {
+            color: #af5197ec;
+            text-decoration: none;
+        }
+
+        .back-to-login a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <div class="password-reset-container">
+        <h2>Esqueceu sua Senha?</h2>
+        <p>Por favor, insira seu CPF abaixo. Enviaremos um token para você redefinir sua senha.</p>
+        <form action="{{ url_for('handle_esqueciSenha') }}" method="POST"> <div class="form-group">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" name="cpf" class="form-control form-control-sm cpf-input" required>
+                <script>
+                    $(document).ready(function() {
+                        $('.cpf-input').mask('000.000.000-00', {reverse: true});
+                    });
+                </script>
+            </div>
+            <button type="submit" class="btn-submit">Enviar Link de Redefinição</button>
+        </form>
+        <div class="back-to-login">
+            <a href="{{ url_for('entrar') }}">Lembrou da senha? Voltar para o Login</a> </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,20 @@
+# Arquivos de ambiente com segredos
+.env
+
+# Cache de Python
+__pycache__/
+*.pyc
+
+# Banco de dados SQLite gerado pelo Flask/Python (se for local e não for versionado)
+*.db
+# ou especificamente:
+usuarios.db
+
+# Logs
+*.log
+
+# Dependências de Node (se usar)
+node_modules/
+
+# Ignorar arquivos específicos do VS Code (se não quiser versionar configurações pessoais)
+.vscode/testes.py

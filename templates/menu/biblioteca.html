@@ -1,105 +1,385 @@
-{% extends 'base.html'%} 
+{% extends 'base.html'%}
 
-{% block body %}  
-
-    <style> 
-        
+{% block body %} 
+    <style>
+        /* Estilos Gerais */
         body {
             font-family: Arial, sans-serif;
-            margin: 0; 
-            padding: 0;
-            background-color: #f0f2f5; 
-            position: relative; 
+            margin: 20px;
+            background-color: #f0f0f0;
+            color: #333;
         }
 
-        /* Barra pesquisa -------------------------------------------------------- */ 
-        .custom-search-bar { 
-            background-color: #e0e0e0; 
-            border-radius: 25px; 
-            padding: 8px 20px; 
-            display: flex; 
-            align-items: center; 
-            width: 100%; 
-            max-width: 300px; /* Reduzi um pouco a largura para caber melhor no canto */
-            box-sizing: border-box; 
-            
-            /* >>>>>>> ESTILOS DE POSICIONAMENTO PARA O CANTO SUPERIOR DIREITO <<<<<<< */
-            position: fixed; /* Ou 'absolute' se você quiser que ela role com a página */
-            top: 20px;       /* Distância do topo */
-            right: 20px;     /* Distância da direita */
-            z-index: 1000;   /* Garante que a barra fique acima de outros elementos */
-        } 
+        /* Barra de Pesquisa */
+        .search-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-        .custom-search-bar .search-icon { 
-            margin-right: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-        } 
+        .search-bar input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            font-size: 1em;
+            outline: none;
+            width: 200px; 
+        }
 
-        .custom-search-bar .search-icon svg { 
-            width: 20px; 
-            height: 20px; 
-            fill: #666666; 
-        } 
+        .search-bar button {
+            padding: 8px 15px;
+            background-color: #7a4a8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-        .custom-search-bar input[type="search"] { 
-            flex-grow: 1; 
-            border: none; 
-            outline: none; 
-            background: transparent; 
-            font-size: 1em; 
-            color: #333333; 
-            padding: 0; 
-        } 
+        .search-bar button img {
+            width: 16px;
+            height: 16px;
+            filter: invert(100%); 
+        }
 
-        .custom-search-bar input[type="search"]::placeholder { 
-            color: #666666; 
-            font-weight: 400; 
-        } 
+        /* Botão Cadastrar Livro */
+        .add-book-button {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 30px;
+        }
 
-        .custom-search-bar button { 
-            display: none; 
-        } 
+        .add-book-button button {
+            padding: 10px 20px;
+            background-color: #7a4a8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-        /* Estilos para outros elementos para evitar sobreposição */
-        .biblioteca-container { 
-            background-color: #fff; 
-            padding: 30px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-            width: 100%; 
-            max-width: 400px; 
-            text-align: center; 
-            margin-top: 100px; /* Adicionado margem para empurrar o conteúdo para baixo da barra fixa */
-            /* Se o body tiver flexbox para centralizar outros elementos, talvez precise de 'margin: 0 auto;' aqui */
-            margin: 100px auto 0 auto; /* Exemplo para centralizar o container da biblioteca e dar margem do topo */
-        } 
+        .add-book-button button::before {
+            content: '+';
+            font-size: 1.5em;
+            line-height: 1; 
+        }
 
-        .biblioteca-container h2 { 
-            margin-bottom: 25px; 
-            color: #333; 
-        } 
-        
-        /* Se você tiver um elemento main no base.html que contém o block body,
-           pode ser mais robusto aplicar margem a esse main. */
-    </style> 
+        /* Lista de Livros */
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsivo */
+            gap: 25px;
+            justify-content: center;
+            max-width: 1200px; /* Largura máxima da grade */
+            margin: 0 auto; /* Centraliza a grade */
+        }
 
+        .book-item {
+            background-color: #e0e0e0;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    <div class="custom-search-bar"> 
-        <form action="/search" method="get" style="display: flex; align-items: center; width: 100%;"> 
-            <span class="search-icon"> 
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"> 
-                    <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill=""/> 
-                </svg> 
-            </span> 
-            <input type="search" id="simple-search" name="q" placeholder="Pesquisar"> 
-            <button type="submit">Buscar</button> 
-        </form> 
-    </div> 
+        .book-item:hover {
+            transform: translateY(-5px);
+        }
 
-    <div class="biblioteca-container"> 
-        <h2>Biblioteca</h2> 
-        </div> 
-    
-    {% endblock %}
+        .book-item .placeholder-cover {
+            width: 120px;
+            height: 180px;
+            background-color: #b0b0b0;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2); /* Sutil efeito de profundidade */
+        }
+
+        .book-item p {
+            margin: 5px 0;
+            font-size: 0.95em;
+            color: #555;
+        }
+
+        .book-item .title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .book-item .author {
+            font-style: italic;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .book-item .reservation-button {
+            padding: 10px 15px;
+            background-color: #7a4a8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .book-item .reservation-button:hover {
+            background-color: #6a3a7c;
+        }
+
+        .book-item .unavailable-text {
+            color: #888;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 0.95em;
+        }
+
+        /* Modal (Pop-up) */
+        .modal {
+            display: none; /* Oculto por padrão */
+            position: fixed; /* Fixado na tela */
+            z-index: 1000; /* Acima de tudo */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Adiciona scroll se necessário */
+            background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+            justify-content: center; /* Para centralizar o conteúdo */
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #e0e0e0;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            display: flex;
+            gap: 30px;
+            max-width: 700px; /* Largura máxima do modal */
+            width: 90%; /* Ajusta-se à tela */
+            box-sizing: border-box; /* Inclui padding na largura */
+        }
+
+        .modal-content .close-button {
+            color: #555;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-content .close-button:hover,
+        .modal-content .close-button:focus {
+            color: #000;
+        }
+
+        .modal-content .book-cover-modal {
+            width: 180px;
+            height: 270px;
+            background-color: #b0b0b0;
+            border-radius: 5px;
+            flex-shrink: 0; /* Previne que a capa diminua */
+            box-shadow: inset 0 0 7px rgba(0,0,0,0.3);
+        }
+
+        .modal-content .book-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Centraliza verticalmente o texto */
+            text-align: left;
+            flex-grow: 1; /* Permite que ocupe o espaço restante */
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+            color: #333;
+            line-height: 1.2;
+        }
+
+        .modal-content h3 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            color: #666;
+            font-style: italic;
+        }
+
+        .modal-content .reserve-button-modal {
+            padding: 12px 25px;
+            background-color: #7a4a8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            align-self: flex-start; /* Alinha o botão à esquerda */
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-content .reserve-button-modal:hover {
+            background-color: #6a3a7c;
+        }
+
+        /* Responsividade básica para o modal */
+        @media (max-width: 600px) {
+            .modal-content {
+                flex-direction: column; /* Pilha a capa e detalhes em telas pequenas */
+                text-align: center;
+                align-items: center;
+                gap: 20px;
+                padding: 20px;
+            }
+            .modal-content .reserve-button-modal {
+                align-self: center; /* Centraliza o botão */
+            }
+            .modal-content h2 {
+                font-size: 1.8em;
+            }
+            .modal-content h3 {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="search-bar">
+        <input type="text" placeholder="Pesquisar">
+        <button>
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktc2VhcmNoIiB2aWV3Qm94PSIwIDAgMTYgMTYiPgogIDxwYXRoIGQ9Ik0xMS43NDIgMTAuMzQ0YTYuNSAxLjUgMCAxIDAgLTEuMzkgMS4zOTJsMy4wOCAzLjA4YTFsMS4wNi0xLjA2LTMuMDgtMy4wOHptLTYuNDQ2LjcxNmE1LjUgNS41IDAgMSAxIDguMjY5LTguMjY5IDUuNSAxLjUgMCAwIDEtOC4yNjkgOC4yNjl6Ii8+Cjwvc3ZnPg==" alt="Pesquisar">
+        </button>
+    </div>
+
+    <div class="add-book-button">
+        <button>Cadastrar Livro</button>
+    </div>
+
+    <div class="book-list">
+        <div class="book-item">
+            <div class="placeholder-cover"></div>
+            <p class="title">O Senhor dos Anéis</p>
+            <p class="author">J.R.R. Tolkien</p>
+            <button class="reservation-button" data-title="O Senhor dos Anéis" data-author="J.R.R. Tolkien">Clique aqui para reservar</button>
+        </div>
+
+        <div class="book-item">
+            <div class="placeholder-cover"></div>
+            <p class="title">1984</p>
+            <p class="author">George Orwell</p>
+            <p class="unavailable-text">Livro Indisponível</p>
+        </div>
+
+        <div class="book-item">
+            <div class="placeholder-cover"></div>
+            <p class="title">Dom Quixote</p>
+            <p class="author">Miguel de Cervantes</p>
+            <button class="reservation-button" data-title="Dom Quixote" data-author="Miguel de Cervantes">Clique aqui para reservar</button>
+        </div>
+
+        <div class="book-item">
+            <div class="placeholder-cover"></div>
+            <p class="title">Cem Anos de Solidão</p>
+            <p class="author">Gabriel García Márquez</p>
+            <button class="reservation-button" data-title="Cem Anos de Solidão" data-author="Gabriel García Márquez">Clique aqui para reservar</button>
+        </div>
+
+        <div class="book-item">
+            <div class="placeholder-cover"></div>
+            <p class="title">Crime e Castigo</p>
+            <p class="author">Fiódor Dostoiévski</p>
+            <button class="reservation-button" data-title="Crime e Castigo" data-author="Fiódor Dostoiévski">Clique aqui para reservar</button>
+        </div>
+
+        <div class="book-item">
+            <div class="placeholder-cover"></div>
+            <p class="title">A Metamorfose</p>
+            <p class="author">Franz Kafka</p>
+            <button class="reservation-button" data-title="A Metamorfose" data-author="Franz Kafka">Clique aqui para reservar</button>
+        </div>
+
+        <div class="book-item">
+            <div class="placeholder-cover"></div>
+            <p class="title">O Pequeno Príncipe</p>
+            <p class="author">Antoine de Saint-Exupéry</p>
+            <button class="reservation-button" data-title="O Pequeno Príncipe" data-author="Antoine de Saint-Exupéry">Clique aqui para reservar</button>
+        </div>
+    </div>
+
+    <div id="bookModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="book-cover-modal"></div>
+            <div class="book-details">
+                <h2 id="modalTitle">Título do Livro</h2>
+                <h3 id="modalAuthor">Autor do Livro</h3>
+                <button class="reserve-button-modal">Clique aqui para reservar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Seleciona o elemento do modal
+        var modal = document.getElementById("bookModal");
+
+        // Seleciona o botão 'X' de fechar dentro do modal
+        var closeButton = document.getElementsByClassName("close-button")[0];
+
+        // Seleciona todos os botões de reserva da lista de livros
+        var reservationButtons = document.querySelectorAll(".reservation-button");
+
+        // Seleciona os elementos onde o título e autor serão exibidos no modal
+        var modalTitle = document.getElementById("modalTitle");
+        var modalAuthor = document.getElementById("modalAuthor");
+
+        // Itera sobre cada botão de reserva para adicionar um evento de clique
+        reservationButtons.forEach(function(button) {
+            button.onclick = function() {
+                // Define o display do modal para 'flex' para exibi-lo e centralizá-lo
+                modal.style.display = "flex";
+
+                // Pega os dados do atributo 'data-title' e 'data-author' do botão clicado
+                var title = this.getAttribute("data-title");
+                var author = this.getAttribute("data-author");
+
+                // Atualiza o conteúdo do modal com os dados do livro
+                modalTitle.textContent = title;
+                modalAuthor.textContent = author;
+            }
+        });
+
+        // Quando o usuário clica no 'X' (closeButton), fecha o modal
+        closeButton.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Quando o usuário clica em qualquer lugar fora do conteúdo do modal, fecha o modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+{% endblock %}

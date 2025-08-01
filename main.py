@@ -1,28 +1,29 @@
-# app.py
+# SITE NÃO ESTÁ PRONTO! Necessita de vários ajustes. Colocando todo meu conhecimento a jogo
+
+# Estou procurando estágio, Região Metropolitana do RS ("grande Porto Alegre")
+# Me chamo João e tenho 17 anos
+
+
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 import pyodbc
-import funcoes as fun # Assumindo que 'funcoes.py' existe e contém as funções referenciadas
-from twilio.rest import Client # Assumindo que Twilio é usado em outras partes do app
-from dotenv import load_dotenv # Assumindo que dotenv é usado em outras partes do app
+import funcoes as fun
+from twilio.rest import Client
+from dotenv import load_dotenv 
 import os
 
-# Carrega variáveis de ambiente (se você tiver um arquivo .env)
+
 load_dotenv()
 
-# Configuração da conexão com o banco de dados
 dados_conexao = ("Driver={SQLite3 ODBC Driver};"
                  "Server=localhost;"
-                 "Database=usuarios.db") # Usando o banco de dados 'usuarios.db' fornecido
+                 "Database=usuarios.db")
 
-# Crie a instância do Flask e diga a ele onde estão os arquivos estáticos
+
 app = Flask(__name__, static_folder='static')
-
 app.config['SECRET_KEY'] = os.urandom(24)
 
 
-# Variável global para armazenar o CPF (se estiver usando uma, cuidado com concorrência em produção)
-# Em aplicações Flask reais, geralmente se usa sessões para armazenar dados de usuário
-# Para este exemplo, vamos manter como está, mas ciente das limitações em um ambiente multi-usuário.
+
 cpfGlobal_mensalidade = [] # Será uma lista com o CPF do usuário logado
 
 
@@ -77,32 +78,38 @@ def handle_login():
         print(f"Erro de Banco de Dados: {ex}")
         flash("Ocorreu um erro ao tentar entrar. Tente novamente mais tarde.", "danger")
         return redirect(url_for('entrar'))
+    
     finally:
         if conexao:
             conexao.close()
             print("Conexão com o banco de dados fechada.")
 
+
 @app.route("/recuperacao_senha")
 def esqueciSenha():
     return render_template("conta/esqueciSenha.html")
 
+
+# No momento, função em espera
 @app.route("/recuperacao_senha", methods=['POST'])
 def handle_esqueciSenha():
     if request.method == "POST":
         cpf = request.form["cpf"]
         print("---Tentativa de Trocar Senha---")
         print(f"CPF: {cpf}")
-        # O código Twilio e de geração de token está comentado aqui,
-        # mas seria o local para integrá-lo se necessário.
+    
         return render_template("conta/entrar.html")
+
 
 @app.route("/token")
 def esqueciSenha_token():
     return render_template("conta/token.html")
 
+
 @app.route("/cadastrarSe")
 def cadastrarSe():
     return render_template("conta/cadastrar.html")
+
 
 @app.route("/cadastrarSe", methods=["POST"])
 def handle_cadastrarSe():
@@ -136,8 +143,6 @@ def handle_cadastrarSe():
             comando1 = 'INSERT INTO usuarios (nome, cpf, senha, telefone, data_criacao) VALUES (?, ?, ?, ?, ?)'
             cursor.execute(comando1, (full_name, cpf, new_password, telefone_formatado, data_criacao))
 
-            # Inserir na tabela de mensalidade com valores padrão
-            # Assumindo que as colunas de mês (jan, fev, etc.) têm um valor padrão 'FALSE' no schema do DB
             comando2 = 'INSERT INTO mensalidade (nome, cpf, ano) VALUES (?, ?, ?)'
             cursor.execute(comando2, (full_name, cpf, ano))
             conexao.commit()
@@ -156,15 +161,17 @@ def handle_cadastrarSe():
                 conexao.close()
                 print("Conexão com o banco de dados fechada.")
 
+
 @app.route("/menu")
 def menu():
     return render_template("menu/menu.html")
 
+
 print(cpfGlobal_mensalidade)
-# --- Rota da Tabela de Mensalidades (ATUALIZADA) ---
-@app.route("/mensalidade") # Esta rota agora buscará e exibirá os dados da tabela
+# --- Rota da Tabela de Mensalidades ---
+@app.route("/mensalidade") 
 def mensalidade():
-    dados_mensalidades_processados = [] # Renomeado para clareza
+    dados_mensalidades_processados = [] 
     mensagem = None
     erro_bd = None
     erro_geral = None
@@ -172,9 +179,6 @@ def mensalidade():
     try:
         with pyodbc.connect(dados_conexao) as conexao:
             with conexao.cursor() as cursor:
-                # Seleciona o nome, CPF e o status dos meses
-                # IMPORTANTE: Adicione 'cpf' à seleção para que possa ser usado no botão de atualização
-                # E use 'set_' para a coluna 'set' devido à palavra reservada
                 comando = """SELECT nome, cpf, jan, fev, mar, abr, mai, jun, jul, ago, set_, out, nov, dec
                              FROM mensalidade"""
 
@@ -185,7 +189,7 @@ def mensalidade():
                 if not resultados:
                     mensagem = "Nenhum registro de mensalidade encontrado."
                 else:
-                    # Nomes das colunas na ordem em que são retornadas pela query (incluindo 'cpf')
+                    
                     colunas = ['nome', 'cpf', 'jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez']
 
                     for linha_bruta in resultados:
@@ -238,10 +242,10 @@ def atualizar_mensalidade(cpf, mes_index):
 
                 if resultado_atual:
                     status_atual_bytes = resultado_atual[0]
-                    # Decodifica o status atual (b'TRUE' ou b'FALSE')
+                  
                     status_atual = status_atual_bytes.decode('utf-8') if isinstance(status_atual_bytes, bytes) else status_atual_bytes
                     
-                    # Inverte o status: 'TRUE' para 'FALSE', 'FALSE' para 'TRUE'
+                    
                     novo_status = 'TRUE' if status_atual == 'FALSE' else 'FALSE'
                     
                     # Atualiza o status no banco de dados

@@ -275,9 +275,82 @@ def despesas():
 def devedores():
     return render_template("menu/devedores.html")
 
-@app.route("/biblioteca")
+@app.route("/biblioteca", methods=["GET"])
 def biblioteca():
-    return render_template("menu/biblioteca.html")
+    livros = [] # Inicializa uma lista vazia para armazenar os livros
+    mensagem = None
+    try:
+        conexao = pyodbc.connect(dados_conexao)
+        cursor = conexao.cursor()
+
+        # Seleciona todos os livros
+        cursor.execute("SELECT titulo, autor, ano_publicacao, disponivel FROM livros")
+        resultados = cursor.fetchall() # Pega TODOS os resultados
+
+        if not resultados:
+            mensagem = "Nenhum livro cadastrado ainda."
+        else:
+            for livro_bruto in resultados:
+                # Cada 'livro_bruto' é uma tupla como (titulo, autor, ano_publicacao, disponivel)
+                # O 'disponivel' é um valor booleano ou numérico (0/1).
+                # Você pode convertê-lo para "True" / "False" para exibir.
+                disponivel_str = "Disponível" if livro_bruto[3] == 1 else "Indisponível"
+                
+                livros.append({
+                    "titulo": livro_bruto[0].decode('utf-8') if isinstance(livro_bruto[0], bytes) else livro_bruto[0],
+                    "autor": livro_bruto[1].decode('utf-8') if isinstance(livro_bruto[1], bytes) else livro_bruto[1],
+                    "ano_publicacao": livro_bruto[2],
+                    "disponivel": disponivel_str,
+                    "is_disponivel_bool": True if livro_bruto[3] == 1 else False # Adiciona um booleano para a lógica do botão
+                })
+        
+    except pyodbc.Error as ex:
+        print(f"Erro de Banco de Dados ao buscar livros: {ex}")
+        mensagem = "Ocorreu um erro ao carregar os livros. Tente novamente mais tarde."
+    finally:
+        if 'conexao' in locals() and conexao:
+            conexao.close()
+            print("Conexão com o banco de dados fechada após busca de livros.")
+
+    # Passa a lista de livros para o template
+    return render_template("menu/biblioteca.html", 
+                           ano_atual=fun.ano_atual(), 
+                           livros=livros)
+
+@app.route("/cadastrar_livro", methods=["POST"])
+def handle_cadastrar_livro():
+    if request.method == "POST":
+        titulo = request.form["title"]
+        autor = request.form["author"]
+        anoPublicacao = request.form["year"]
+        data_atual = fun.dataAtual()
+
+        print("--- Cadastro de Novo Livro ---")
+        print(f"Título: {titulo}")
+        print(f"Autor: {autor}")
+        print(f"Ano Publicação: {anoPublicacao}")
+        print(f"Ano Atual: {data_atual}")
+
+        try:
+            conexao = pyodbc.connect(dados_conexao)
+            cursor = conexao.cursor()
+            comando = "INSERT INTO livros (titulo, autor, ano_publicacao, data_cadastro) VALUES (?, ?, ?, ?)"
+            cursor.execute(comando, (titulo, autor, anoPublicacao, data_atual))
+            conexao.commit()
+            flash("Livro cadastrado com sucesso!", "success")
+            
+        except pyodbc.Error as ex:
+            print(f"Erro ao cadastrar livro: {ex}")
+            flash("Ocorreu um erro ao cadastrar o livro. Tente novamente.", "danger")
+        finally:
+            if 'conexao' in locals() and conexao:
+                conexao.close()
+
+
+        flash("Livro cadastrado (simulado por enquanto)! Redirecionando...", "success")
+        return redirect(url_for('biblioteca'))
+
+          
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -146,7 +146,6 @@ def handle_cadastrarSe():
             comando2 = 'INSERT INTO mensalidade (nome, cpf, ano) VALUES (?, ?, ?)'
             cursor.execute(comando2, (full_name, cpf, ano))
             conexao.commit()
-            print("Comando de cadastro e inicialização de mensalidade funcionou! _____________________________________________________________________")
 
             flash("Cadastro realizado com sucesso! Agora você pode fazer login.", "success")
             return redirect(url_for('entrar'))
@@ -167,7 +166,7 @@ def menu():
     return render_template("menu/menu.html")
 
 
-print(cpfGlobal_mensalidade)
+
 # --- Rota da Tabela de Mensalidades ---
 @app.route("/mensalidade") 
 def mensalidade():
@@ -224,11 +223,9 @@ def mensalidade():
                            erro_geral=erro_geral)
 
 
-# --- Rota para Atualizar Mensalidade (Exemplo - você precisará implementar a lógica de UPDATE) ---
+# --- Rota para Atualizar Mensalidade ---
 @app.route("/atualizar_mensalidade/<cpf>/<int:mes_index>")
 def atualizar_mensalidade(cpf, mes_index):
-    # Mapeia o índice do mês para o nome da coluna no banco de dados
-    # Lembre-se que 'set' é 'set_' no DB
     meses_nomes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set_', 'out', 'nov', 'dec']
     nome_mes = meses_nomes[mes_index]
 
@@ -242,7 +239,7 @@ def atualizar_mensalidade(cpf, mes_index):
 
                 if resultado_atual:
                     status_atual_bytes = resultado_atual[0]
-                  
+                    
                     status_atual = status_atual_bytes.decode('utf-8') if isinstance(status_atual_bytes, bytes) else status_atual_bytes
                     
                     
@@ -291,9 +288,7 @@ def biblioteca():
             mensagem = "Nenhum livro cadastrado ainda."
         else:
             for livro_bruto in resultados:
-                # Cada 'livro_bruto' é uma tupla como (titulo, autor, ano_publicacao, disponivel)
-                # O 'disponivel' é um valor booleano ou numérico (0/1).
-                # Você pode convertê-lo para "True" / "False" para exibir.
+                
                 disponivel_str = "Disponível" if livro_bruto[3] == 1 else "Indisponível"
                 
                 livros.append({
@@ -350,7 +345,96 @@ def handle_cadastrar_livro():
         flash("Livro cadastrado (simulado por enquanto)! Redirecionando...", "success")
         return redirect(url_for('biblioteca'))
 
-          
+
+
+# Rota API para listar livros (para uso no modal de exclusão)
+@app.route("/api/livros", methods=["GET"])
+def api_livros():
+    livros_data = []
+    try:
+        with pyodbc.connect(dados_conexao) as conexao:
+            with conexao.cursor() as cursor:
+                cursor.execute("SELECT id, titulo, autor, ano_publicacao, disponivel FROM livros") 
+                resultados = cursor.fetchall()
+
+                for livro_bruto in resultados:
+                    livros_data.append({
+                        "id": livro_bruto[0],
+                        "titulo": livro_bruto[1].decode('utf-8') if isinstance(livro_bruto[1], bytes) else livro_bruto[1],
+                        "autor": livro_bruto[2].decode('utf-8') if isinstance(livro_bruto[2], bytes) else livro_bruto[2],
+                        "ano_publicacao": livro_bruto[3],
+                        "disponivel": True if livro_bruto[4] == 1 else False # Ajuste conforme seu tipo de dado
+                    })
+        return jsonify(livros_data), 200
+    except pyodbc.Error as ex:
+        print(f"Erro de Banco de Dados ao buscar livros para API: {ex}")
+        return jsonify({"message": "Erro ao buscar livros."}), 500
+    except Exception as e:
+        print(f"Erro inesperado ao buscar livros para API: {e}")
+        return jsonify({"message": "Erro inesperado."}), 500
+
+
+# Rota para Deletar Livros
+@app.route("/deletar_livros", methods=["POST"])
+def deletar_livros():
+    try:
+        data = request.get_json()
+        book_ids = data.get("book_ids")
+
+        if not book_ids:
+            return jsonify({"message": "Nenhum livro selecionado para exclusão."}), 400
+
+        # Converte os IDs para inteiros e verifica se são válidos
+        valid_book_ids = []
+        for book_id in book_ids:
+            try:
+                valid_book_ids.append(int(book_id))
+            except ValueError:
+                return jsonify({"message": "IDs de livro inválidos fornecidos."}), 400
+
+        if not valid_book_ids:
+            return jsonify({"message": "Nenhum ID de livro válido para exclusão."}), 400
+
+        # Cria uma string de placeholders para a cláusula IN
+        placeholders = ','.join(['?' for _ in valid_book_ids])
+
+        with pyodbc.connect(dados_conexao) as conexao:
+            with conexao.cursor() as cursor:
+                comando = f"DELETE FROM livros WHERE id IN ({placeholders})"
+                cursor.execute(comando, valid_book_ids)
+                conexao.commit()
+
+                if cursor.rowcount > 0:
+                    flash(f"{cursor.rowcount} livro(s) deletado(s) com sucesso!", "success")
+                    return jsonify({"message": f"{cursor.rowcount} livro(s) deletado(s) com sucesso!"}), 200
+                else:
+                    return jsonify({"message": "Nenhum livro encontrado com os IDs fornecidos."}), 404
+
+    except pyodbc.Error as ex:
+        print(f"Erro de Banco de Dados ao deletar livros: {ex}")
+        return jsonify({"message": "Ocorreu um erro ao deletar os livros no banco de dados."}), 500
+    except Exception as e:
+        print(f"Erro inesperado ao deletar livros: {e}")
+        return jsonify({"message": "Ocorreu um erro inesperado ao deletar os livros."}), 500
+
+
+@app.route("/pesquisar_livros", methods=["POST"])
+def pesquisar_livros():
+    try:
+        conexao = pyodbc.connect(dados_conexao)
+        cursor = conexao.cursor()
+
+        livro = 'teste3'
+        comando = "SELECT titulo, autor, ano_publicacao, disponivel FROM livros WHERE titulo='{livro}'"
+        resultados = cursor.fetchall()
+
+    except pyodbc.Error as ex:
+        print(f"Erro de Banco de Dados ao buscar livros: {ex}")
+        mensagem = "Ocorreu um erro ao carregar os livros. Tente novamente mais tarde."
+    finally:
+        if 'conexao' in locals() and conexao:
+            conexao.close()
+            print("Conexão com o banco de dados fechada após busca de livros.")
 
 if __name__ == '__main__':
     app.run(debug=True)

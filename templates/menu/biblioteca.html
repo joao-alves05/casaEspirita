@@ -47,11 +47,50 @@
             filter: invert(100%);
         }
 
+        /* --- NOVO ESTILO PARA O CONTAINER DOS BOTÕES --- */
+        .button-container {
+            display: flex; /* Coloca os itens um ao lado do outro */
+            justify-content: space-between; /* Empurra um botão para o início e o outro para o fim */
+            align-items: center; /* Alinha os itens verticalmente no centro */
+            margin-bottom: 30px; /* Mantém a margem inferior para o grupo de botões */
+            width: 100%; /* Ocupa a largura total disponível */
+            max-width: 1200px; /* Alinha com a largura máxima da lista de livros */
+            margin-left: auto; /* Centraliza o container */
+            margin-right: auto; /* Centraliza o container */
+            padding: 0 20px; /* Adiciona um padding para evitar que os botões colem nas bordas */
+            box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+        }
+
+        /* Botão Deletar Livro */
+        .del-book-button {
+            margin-bottom: 0; 
+        }
+
+        .del-book-button button{
+            padding: 10px 20px;
+            background-color: #7a4a8c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .del-book-button button:hover {
+            background-color: #6a3a7c;
+            color: white;
+            padding: 11px 21px;
+        }
+
         /* Botão Cadastrar Livro */
         .add-book-button {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 30px;
+            /* As propriedades display, justify-content e margin-bottom foram movidas para .button-container */
+            /* display: flex; REMOVER */
+            /* justify-content: flex-end; REMOVER */
+            margin-bottom: 0; /* Ajustado para 0, pois o .button-container já tem margin-bottom */
         }
 
         .add-book-button button {
@@ -66,7 +105,6 @@
             align-items: center;
             gap: 8px;
         }
-
 
         .add-book-button button::before {
             content: '+';
@@ -83,11 +121,11 @@
         /* Lista de Livros */
         .book-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsivo */
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 25px;
             justify-content: center;
-            max-width: 1200px; /* Largura máxima da grade */
-            margin: 0 auto; /* Centraliza a grade */
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .book-item {
@@ -113,7 +151,7 @@
             background-color: #b0b0b0;
             margin-bottom: 15px;
             border-radius: 5px;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.2); /* Sutil efeito de profundidade */
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
         }
 
         .book-item p {
@@ -159,16 +197,16 @@
 
         /* Estilos Comuns de Modal (para o modal de reserva e o de cadastro) */
         .modal {
-            display: none; /* Oculto por padrão */
-            position: fixed; /* Fixado na tela */
-            z-index: 1000; /* Acima de tudo */
+            display: none;
+            position: fixed;
+            z-index: 1000;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto; /* Adiciona scroll se necessário */
-            background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
-            justify-content: center; /* Para centralizar o conteúdo */
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
             align-items: center;
         }
 
@@ -178,9 +216,9 @@
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             position: relative;
-            max-width: 700px; /* Largura máxima do modal */
-            width: 90%; /* Ajusta-se à tela */
-            box-sizing: border-box; /* Inclui padding na largura */
+            max-width: 700px;
+            width: 90%;
+            box-sizing: border-box;
         }
 
         .modal-content .close-button {
@@ -210,16 +248,16 @@
             height: 270px;
             background-color: #b0b0b0;
             border-radius: 5px;
-            flex-shrink: 0; /* Previne que a capa diminua */
+            flex-shrink: 0;
             box-shadow: inset 0 0 7px rgba(0,0,0,0.3);
         }
 
         #bookModal .book-details {
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Centraliza verticalmente o texto */
+            justify-content: center;
             text-align: left;
-            flex-grow: 1; /* Permite que ocupe o espaço restante */
+            flex-grow: 1;
         }
 
         #bookModal h2 {
@@ -246,7 +284,7 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1.1em;
-            align-self: flex-start; /* Alinha o botão à esquerda */
+            align-self: flex-start;
             transition: background-color 0.3s ease;
         }
 
@@ -256,9 +294,9 @@
 
         /* Estilos específicos para o Modal de Cadastro de Livro */
         #addBookModal .modal-content {
-            flex-direction: column; /* Para empilhar os campos do formulário */
+            flex-direction: column;
             align-items: center;
-            gap: 15px; /* Espaço entre os elementos do formulário */
+            gap: 15px;
         }
 
         #addBookModal h2 {
@@ -271,36 +309,36 @@
         #addBookModal form {
             display: flex;
             flex-direction: column;
-            width: 100%; /* Ocupa a largura total do modal-content */
+            width: 100%;
         }
 
         #addBookModal label {
             margin-bottom: 5px;
             font-weight: bold;
             color: #555;
-            align-self: flex-start; /* Alinha o label à esquerda */
+            align-self: flex-start;
         }
 
         #addBookModal input[type="text"],
         #addBookModal input[type="number"],
         #addBookModal textarea {
-            width: calc(100% - 20px); /* Ocupa quase 100% da largura com padding */
+            width: calc(100% - 20px);
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 1em;
-            box-sizing: border-box; /* Inclui padding na largura */
+            box-sizing: border-box;
         }
 
         #addBookModal textarea {
-            resize: vertical; /* Permite redimensionar verticalmente */
+            resize: vertical;
             min-height: 80px;
         }
 
         #addBookModal button[type="submit"] {
             padding: 12px 25px;
-            background-color: #7a4a8c; /* Cor verde para o botão de cadastro */
+            background-color: #7a4a8c;
             color: white;
             border: none;
             border-radius: 5px;
@@ -314,8 +352,80 @@
             background-color: #6a3a7c;
         }
 
-        /* Responsividade para ambos os modais */
-        @media (max-width: 600px) {
+        /* NOVO ESTILO: Estilos específicos para o Modal de Excluir Livro */
+        #delBookModal .modal-content {
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #delBookModal h2 {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        #delBookModal form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        #delBookModal input[type="checkbox"] {
+            margin-right: 8px;
+            /* Aumenta o tamanho do checkbox para facilitar o clique */
+            transform: scale(1.2); 
+            cursor: pointer;
+        }
+
+        #delBookModal label {
+            font-size: 1.1em;
+            color: #444;
+            cursor: pointer;
+        }
+
+        #booksToDeleteList {
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            width: 100%;
+            box-sizing: border-box;
+            max-height: 300px; /* Limita a altura e adiciona scroll */
+            overflow-y: auto;
+        }
+
+        #booksToDeleteList div {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+            display: flex;
+            align-items: center;
+        }
+        #booksToDeleteList div:last-child {
+            border-bottom: none;
+        }
+
+
+        #delBookModal .del-confirm-button {
+            padding: 12px 25px;
+            background-color: #dc3545; /* Cor vermelha para exclusão */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        #delBookModal .del-confirm-button:hover {
+            background-color: #c82333;
+        }
+
+
+        /* Responsividade para ambos os modais e para o button-container */
+        @media (max-width: 768px) { /* Ajuste o breakpoint conforme necessário */
             .modal-content {
                 padding: 20px;
             }
@@ -341,22 +451,32 @@
             #addBookModal h2 {
                 font-size: 1.5em;
             }
+
+            /* --- Responsividade para o Container dos Botões --- */
+            .button-container {
+                flex-direction: column; /* Empilha os botões verticalmente */
+                align-items: center; /* Centraliza os botões */
+                gap: 15px; /* Adiciona espaço entre os botões empilhados */
+            }
         }
     </style>
-
 
     <div class="search-bar">
         <input type="text" placeholder="Pesquisar">
         <button>
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgZmlsbD0iY3VycmVudENvbG9yIiBjbGFzcz0iYmkgYmktc2VhcmNoIiB2aWV3Qm94PSIwIDAgMTYgMTYiPgogIDxwYXRoIGQ9Ik0xMS43NDIgMTAuMzQ0YTYuNSAxLjUgMCAxIDAgLTEuMzkgMS4zOTJsMy4wOCAzLjA4YTFsMS4wNi0xLjA2LTMuMDgtMy4wOHptLTYuNDQ2LjcxNmE1LjUgNS41IDAgMSAxIDguMjY5LTguMjY5IDUuNSAxLjUgMCAwIDEtOC4yNjkgOC4yNjl6Ii8+Cjwvc3ZnPg==" alt="Pesquisar">
+            <img src="{{ url_for('static', filename='imgs_biblioteca/lupaPesquisar.webp') }}" alt="Pesquisar">
         </button>
     </div>
 
-    <div class="add-book-button">
-        <button id="openAddBookModalBtn">Cadastrar Livro</button>
+    <div class="button-container">
+        <div class="del-book-button">
+            <button id="openDelBookModalBtn">Deletar Livro</button>
+        </div>
+        <div class="add-book-button">
+            <button id="openAddBookModalBtn">Cadastrar Livro</button>
+        </div>
     </div>
-
-
+    
     <div class="book-list">
         {% for livro in livros %}
             <div class="book-item">
@@ -406,15 +526,32 @@
         </div>
     </div>
 
+    <div id="delBookModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeDelBookModal">&times;</span>
+            <h2>Selecione os livros para deletar</h2>
+            <form id="deleteBooksForm">
+                <div id="booksToDeleteList" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                    </div>
+                <button type="submit" class="del-confirm-button">Confirmar Exclusão</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="search-bar" class="modal">
+        <div class="modal-content">
+            <h2>Pesquise o livro que deseja</h2>
+            <form action="{{ url_for('pesquisar_livros') }}"></form>
+        </div>
+    </div>
+
     <script>
         // --- Modal de Detalhes/Reserva ---
         var bookModal = document.getElementById("bookModal");
         var bookCloseButton = bookModal.querySelector(".close-button");
-        // Seleciona todos os botões de reserva, incluindo os gerados dinamicamente
-        var bookList = document.querySelector(".book-list"); // Onde os livros são listados
+        var bookList = document.querySelector(".book-list");
 
-        // Ação para abrir o modal de detalhes do livro
-        // Usamos delegação de evento para capturar cliques em botões de reserva que podem ser adicionados dinamicamente
         bookList.addEventListener('click', function(event) {
             if (event.target.classList.contains('reservation-button')) {
                 bookModal.style.display = "flex";
@@ -429,20 +566,107 @@
             bookModal.style.display = "none";
         }
 
-        // --- NOVO JAVASCRIPT PARA O MODAL DE CADASTRO DE LIVRO ---
+        // --- JAVASCRIPT PARA O MODAL DE CADASTRO DE LIVRO ---
         var addBookModal = document.getElementById("addBookModal");
-        var openAddBookModalBtn = document.getElementById("openAddBookModalBtn");
+        var openAddBookModalBtn = document.getElementById("openAddBookModalBtn"); 
         var closeAddBookModal = document.getElementById("closeAddBookModal");
 
-        // Quando o botão "Cadastrar Livro" é clicado, abre o modal de cadastro
         openAddBookModalBtn.onclick = function() {
             addBookModal.style.display = "flex";
         }
 
-        // Quando o usuário clica no 'X' do modal de cadastro, fecha-o
         closeAddBookModal.onclick = function() {
             addBookModal.style.display = "none";
         }
+
+        // --- NOVO JAVASCRIPT PARA O MODAL DE DELETAR LIVRO ---
+        var delBookModal = document.getElementById("delBookModal");
+        var openDelBookModalBtn = document.getElementById("openDelBookModalBtn");
+        var closeDelBookModal = document.getElementById("closeDelBookModal");
+        var booksToDeleteList = document.getElementById("booksToDeleteList");
+        var deleteBooksForm = document.getElementById("deleteBooksForm");
+
+        // Função para carregar e exibir os livros no modal de exclusão
+        async function loadBooksForDeletion() {
+            booksToDeleteList.innerHTML = ''; // Limpa a lista antes de carregar
+            try {
+                // Requisição para a API para obter a lista de livros
+                // A rota /api/livros retornará o 'id', 'titulo' e 'autor'
+                const response = await fetch('/api/livros'); 
+                if (!response.ok) {
+                    throw new Error('Erro ao carregar os livros para exclusão.');
+                }
+                const livros = await response.json(); // Assumimos que o Flask retorna um JSON
+
+                if (livros.length === 0) {
+                    booksToDeleteList.innerHTML = '<p>Nenhum livro cadastrado para deletar.</p>';
+                } else {
+                    livros.forEach(livro => {
+                        const div = document.createElement('div');
+                        div.style.marginBottom = '10px';
+                        div.innerHTML = `
+                            <input type="checkbox" id="book-${livro.id}" name="book_ids" value="${livro.id}">
+                            <label for="book-${livro.id}">${livro.titulo} - ${livro.autor}</label>
+                        `;
+                        booksToDeleteList.appendChild(div);
+                    });
+                }
+            } catch (error) {
+                console.error("Erro ao carregar livros para exclusão:", error);
+                booksToDeleteList.innerHTML = `<p style="color: red;">${error.message}</p>`;
+            }
+        }
+
+        // Abre o modal de exclusão e carrega os livros
+        openDelBookModalBtn.onclick = function() {
+            delBookModal.style.display = "flex";
+            loadBooksForDeletion(); // Carrega os livros quando o modal é aberto
+        }
+
+        // Quando o usuário clica no 'X' do modal de exclusão, fecha-o
+        closeDelBookModal.onclick = function() {
+            delBookModal.style.display = "none";
+        }
+
+        // Envio do formulário de exclusão
+        deleteBooksForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const selectedBookIds = Array.from(booksToDeleteList.querySelectorAll('input[name="book_ids"]:checked'))
+                                         .map(checkbox => checkbox.value);
+
+            if (selectedBookIds.length === 0) {
+                alert("Por favor, selecione pelo menos um livro para deletar.");
+                return;
+            }
+
+            if (!confirm(`Tem certeza que deseja deletar ${selectedBookIds.length} livro(s) selecionado(s)?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/deletar_livros', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ book_ids: selectedBookIds })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(result.message);
+                    delBookModal.style.display = "none"; // Fecha o modal
+                    location.reload(); // Recarrega a página para atualizar a lista de livros
+                } else {
+                    alert(`Erro: ${result.message}`);
+                }
+            } catch (error) {
+                console.error("Erro ao deletar livros:", error);
+                alert("Ocorreu um erro ao tentar deletar os livros. Tente novamente.");
+            }
+        });
 
         // Quando o usuário clica em qualquer lugar fora de QUALQUER modal, fecha o modal ativo
         window.onclick = function(event) {
@@ -451,6 +675,9 @@
             }
             if (event.target == addBookModal) {
                 addBookModal.style.display = "none";
+            }
+            if (event.target == delBookModal) { // Adicionado para o modal de exclusão
+                delBookModal.style.display = "none";
             }
         }
     </script>
